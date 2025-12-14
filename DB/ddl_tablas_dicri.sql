@@ -1,0 +1,65 @@
+CREATE DATABASE mp_proyect;
+USE mp_proyect;
+
+-- ---------------------------------------------------------------------------------
+--  DDL DE TABLAS
+-- ---------------------------------------------------------------------------------
+
+CREATE TABLE TIPO_USUARIO(
+	id INT IDENTITY,
+	tipo_usuario VARCHAR(50),
+
+	CONSTRAINT PK_TIPO_USUARIO PRIMARY KEY(id)
+);
+
+CREATE TABLE USUARIOS(
+	id_usuario INT IDENTITY,
+	user_name VARCHAR(50) NOT NULL,
+	clave VARCHAR(20) NOT NULL,
+	nombres VARCHAR(30) NOT NULL,
+	apellidos VARCHAR(30) NOT NULL,
+	id_tipo_usuario INT NOT NULL,
+	estado BIT NOT NULL DEFAULT 1,
+
+	CONSTRAINT PK_USUARIOS PRIMARY KEY(id_usuario),
+	CONSTRAINT FK_USUARIOS_TIPO_USUARIO FOREIGN KEY(id_tipo_usuario) REFERENCES TIPO_USUARIO(id)
+);
+
+CREATE TABLE EXPEDIENTES (
+	id_expediente INT IDENTITY,
+	descripcion VARCHAR(500),
+	fecha_creacion DATETIME NOT NULL DEFAULT GETDATE(),
+	usuario_creacion INT NOT NULL,
+	estado VARCHAR(20) NOT NULL,
+
+	CONSTRAINT PK_EXPEDIENTES PRIMARY KEY(id_expediente),
+	CONSTRAINT FK_EXPEDIENTES_USUARIOS FOREIGN KEY(usuario_creacion) REFERENCES USUARIOS(id_usuario)
+);
+
+CREATE TABLE INDICIOS(
+	id_indicio INT IDENTITY,
+	id_expediente INT NOT NULL,
+	descripcion VARCHAR(500) NOT NULL,
+	color VARCHAR(30),
+	peso DECIMAL(10,2),
+	ubicacion VARCHAR(200),
+	fecha_creacion DATETIME NOT NULL DEFAULT GETDATE(),
+	usuario_creacion INT NOT NULL,
+
+	CONSTRAINT PK_INDICIOS PRIMARY KEY(id_indicio),
+	CONSTRAINT FK_INDICIOS_EXPEDIENTES FOREIGN KEY(id_expediente) REFERENCES EXPEDIENTES(id_expediente) ON DELETE CASCADE,
+	CONSTRAINT FK_INDICIOS_USUARIOS FOREIGN KEY(usuario_creacion) REFERENCES USUARIOS(id_usuario)
+);
+
+CREATE TABLE REVISIONES_EXPEDIENTE(
+	id_revision INT IDENTITY,
+	id_expediente INT NOT NULL,
+	id_coordinador INT NOT NULL,
+	estado VARCHAR(20) NOT NULL,
+	justificacion VARCHAR(500),
+	fecha_revision DATETIME NOT NULL DEFAULT GETDATE(),
+
+	CONSTRAINT PK_REVISION_EXPEDIENTE PRIMARY KEY(id_revision),
+	CONSTRAINT FK_REVISION_EXP_EXPEDIENTE FOREIGN KEY(id_expediente) REFERENCES EXPEDIENTES(id_expediente) ON DELETE CASCADE,
+	CONSTRAINT FK_REVISION_EXP_USUARIO FOREIGN KEY(id_coordinador) REFERENCES USUARIOS(id_usuario)
+);
