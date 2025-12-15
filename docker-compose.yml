@@ -1,0 +1,41 @@
+version: "3.3"
+
+services: 
+  
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql_server
+
+    restart: always 
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Compak-369"
+    
+    volumes:
+      - mssql_data:/var/opt/mssql
+    ports:
+      - "1433:1433" 
+    networks: 
+      - networkmp
+  
+  backend:
+    container_name: rest-api
+    restart: always
+    build: ./Backend
+    ports:
+      - "3000:3000" 
+    environment:
+      PORT: 3000
+      DB_USER: "sa"
+      DB_PASSWORD: "Compak-369"
+      DB_SERVER: "db"
+      DB_NAME: "mp_proyect"
+    networks: 
+      - networkmp
+
+volumes:
+  mssql_data:
+    driver: local
+
+networks:
+  networkmp:

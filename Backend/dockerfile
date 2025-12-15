@@ -1,0 +1,14 @@
+FROM node:latest
+
+ENV PORT 3000
+ENV DB_USER="sa"
+ENV DB_PASSWORD="Compak-369"
+ENV DB_SERVER="localhost"
+ENV DB_NAME="mp_proyect"
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["npm", "run", "dev"]
